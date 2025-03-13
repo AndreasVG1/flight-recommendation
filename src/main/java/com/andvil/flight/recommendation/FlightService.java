@@ -1,6 +1,8 @@
 package com.andvil.flight.recommendation;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,8 +19,8 @@ public class FlightService {
         this.flightRepository = flightRepository;
     }
 
-    public List<Flight> getAllFlights() {
-        return flightRepository.findAll();
+    public Page<Flight> getAllFlights(Pageable pageable) {
+        return flightRepository.findAll(pageable);
     }
 
     public Optional<Flight> getFlight(Long id) {
@@ -42,7 +44,7 @@ public class FlightService {
         return addFlight(flight);
     }
 
-    public FlightDTO toDTO(Flight flight) {
+    public static FlightDTO toDTO(Flight flight) {
         return new FlightDTO(
                 flight.getAirline(),
                 flight.getFlightNumber(),
@@ -57,7 +59,7 @@ public class FlightService {
         );
     }
 
-    public Flight toEntity(FlightDTO dto) {
+    public static Flight toEntity(FlightDTO dto) {
         return new Flight(
                 dto.airline(),
                 dto.flightNumber(),
