@@ -41,10 +41,10 @@ public class FlightRestController {
         return ResponseEntity.status(HttpStatus.OK).body(flightDTOs);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<FlightDTO> getFlightById(@PathVariable Long id) {
-        Flight flight = flightService.getFlight(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Flight with ID " + id + " not found!"));
+    @GetMapping("/{flightNumber}")
+    public ResponseEntity<FlightDTO> getFlightByNumber(@PathVariable String flightNumber) {
+        Flight flight = flightService.getFlightByNumber(flightNumber)
+                .orElseThrow(() -> new ResourceNotFoundException("Flight with number " + flightNumber + " not found!"));
         return ResponseEntity.status(HttpStatus.OK).body(FlightService.toDTO(flight));
     }
 

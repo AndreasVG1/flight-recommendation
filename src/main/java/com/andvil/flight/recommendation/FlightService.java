@@ -47,6 +47,10 @@ public class FlightService {
         return flightRepository.findById(id);
     }
 
+    public Optional<Flight> getFlightByNumber(String flightNumber) {
+        return flightRepository.findByFlightNumber(flightNumber);
+    }
+
     public Flight addFlight(Flight flight) {
         return flightRepository.save(flight);
     }
