@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.Random;
 
 @RestController
 @RequestMapping("/api/flights")
@@ -46,59 +45,45 @@ public class FlightRestController {
         Flight flight = flightService.getFlightByNumber(flightNumber)
                 .orElseThrow(() -> new ResourceNotFoundException("Flight with number " + flightNumber + " not found!"));
 
-        SelectedFlightDTO selectedFlightDTO = new SelectedFlightDTO(
-                flight.getAirline(),
-                flight.getFlightNumber(),
-                flight.getAirplane(),
-                flight.getDeparture(),
-                flight.getDestination(),
-                flight.getDepartureTime().toString(),
-                flight.getArrivalTime().toString(),
-                flight.getPrice(),
-                flight.getDuration(),
-                generateSeatingPlan(flight.getSeatingPlan())
-        );
+        SelectedFlightDTO selectedFlightDTO = flightService.toSelectedDTO(flight);
 
         return ResponseEntity.status(HttpStatus.OK).body(selectedFlightDTO);
     }
 
-    private String[][] generateSeatingPlan(String seatingPlan) {
-        String[] parts = seatingPlan.split("-");
-        int leftSeats = Integer.parseInt(parts[0]);
-        int rightSeats = Integer.parseInt(parts[1]);
-        int rows = (leftSeats + rightSeats) * 10;
+    @PostMapping("/{flightNumber}/select")
+    public ResponseEntity<SelectedFlightDTO> reserveSeats(@PathVariable String flightNumber, @RequestParam String seats) {
+        Flight flight = flightService.getFlightByNumber(flightNumber)
+                .orElseThrow(() -> new ResourceNotFoundException("Flight not found!"));
 
-        int totalSeatsPerRow = leftSeats + rightSeats + 1;
-        String[][] seatPlan = new String[rows][totalSeatsPerRow];
+        String[] selectedSeats = seats.split(",");
+        SelectedFlightDTO flightDTO = flightService.toSelectedDTO(flight);
 
-        for (int row = 0; row < rows; row++) {
-            for (int seat = 0; seat < totalSeatsPerRow; seat++) {
-                if (seat == leftSeats) {
-                    seatPlan[row][seat] = " | ";
-                } else {
-                    int seatNumber = (seat < leftSeats) ? seat : seat - 1;
-                    char seatLetter = (char) ('A' + seatNumber);
-                    seatPlan[row][seat] = (row + 1) + String.valueOf(seatLetter);
+        String[][] seatingPlan = flightDTO.seatingPlan();
+
+        for (String selectedSeat : selectedSeats) {
+            boolean seatFound = false;
+
+            for (int row = 0; row < seatingPlan.length; row++) {
+                for (int col = 0; col < seatingPlan[row].length; col++) {
+                    if (selectedSeat.equals(seatingPlan[row][col])) {
+                        seatingPlan[row][col] = "O";
+                        seatFound = true;
+                        break;
+                    }
                 }
             }
-        }
 
-        return occupyRandomSeats(seatPlan);
-    }
-
-    private String[][] occupyRandomSeats(String[][] seatingPlan) {
-        Random random = new Random();
-        int rows = seatingPlan.length;
-        int seats = seatingPlan[0].length;
-
-        for (int i = 0; i < 30; i++) {
-            int randomRow = random.nextInt(rows);
-            int randomSeat = random.nextInt(seats);
-            if (!seatingPlan[randomRow][randomSeat].equals(" | ")) {
-                seatingPlan[randomRow][randomSeat] = "X";
+            if (!seatFound) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(flightDTO);
             }
         }
-        return seatingPlan;
+
+        flight.setSeatsJson(flightService.convertSeatsToJson(seatingPlan));
+        flightService.save(flight);
+        SelectedFlightDTO selectedFlightDTO = flightService.toSelectedDTO(flight);
+
+        return ResponseEntity.status(HttpStatus.OK).body(selectedFlightDTO);
     }
 
     private List<Sort.Order> getSortOrder(String sort) {

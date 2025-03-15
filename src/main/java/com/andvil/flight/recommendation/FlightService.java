@@ -1,5 +1,7 @@
 package com.andvil.flight.recommendation;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -60,5 +62,76 @@ public class FlightService {
                 flight.getPrice(),
                 flight.getDuration()
         );
+    }
+
+    public SelectedFlightDTO toSelectedDTO(Flight flight) {
+        return new SelectedFlightDTO(
+                flight.getAirline(),
+                flight.getFlightNumber(),
+                flight.getAirplane(),
+                flight.getDeparture(),
+                flight.getDestination(),
+                flight.getDepartureTime().toString(),
+                flight.getArrivalTime().toString(),
+                flight.getPrice(),
+                flight.getDuration(),
+                getSeats(flight)
+        );
+    }
+
+    public void save(Flight flight) {
+        flightRepository.save(flight);
+    }
+
+    private String[][] getSeats(Flight flight) {
+        if (flight.getSeatsJson() == null) {
+            String[][] seats = generateSeating(flight.getSeatingPlan());
+            flight.setSeatsJson(convertSeatsToJson(seats));
+            flightRepository.save(flight);
+            return seats;
+        } else {
+            return convertJsonToSeats(flight.getSeatsJson());
+        }
+    }
+
+    private String[][] generateSeating(String seatingPlan) {
+        String[] parts = seatingPlan.split("-");
+        int leftSeats = Integer.parseInt(parts[0]);
+        int rightSeats = Integer.parseInt(parts[1]);
+        int rows = 20;
+
+        int totalSeatsPerRow = leftSeats + rightSeats + 1;
+        String[][] seatPlan = new String[rows][totalSeatsPerRow];
+
+        for (int row = 0; row < rows; row++) {
+            for (int seat = 0; seat < totalSeatsPerRow; seat++) {
+                if (seat == leftSeats) {
+                    seatPlan[row][seat] = " | ";
+                } else {
+                    char seatLetter = (char) ('A' + (seat > leftSeats ? seat - 1 : seat));
+                    seatPlan[row][seat] = (Math.random() < 0.2) ? "X" : (row + 1) + String.valueOf(seatLetter);
+                }
+            }
+        }
+
+        return seatPlan;
+    }
+
+    public String convertSeatsToJson(String[][] seats) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.writeValueAsString(seats);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error converting seats to JSON", e);
+        }
+    }
+
+    private String[][] convertJsonToSeats(String seatsJson) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.readValue(seatsJson, String[][].class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error converting JSON to seats", e);
+        }
     }
 }

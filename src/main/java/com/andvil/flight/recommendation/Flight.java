@@ -22,11 +22,14 @@ public class Flight {
     private LocalDateTime arrivalTime;
     private String seatingPlan;
 
+    @Column(columnDefinition = "TEXT")
+    private String seatsJson;
+
     public Flight() {}
 
     public Flight(String airline, String flightNumber, String departure, String destination,
                   String airplane, Integer duration, Double price, LocalDateTime departureTime,
-                  LocalDateTime arrivalTime, String seatingPlan) {
+                  LocalDateTime arrivalTime, String seatingPlan, String seatsJson) {
         this.airline = airline;
         this.flightNumber = flightNumber;
         this.departure = departure;
@@ -37,6 +40,7 @@ public class Flight {
         this.departureTime = departureTime;
         this.arrivalTime = arrivalTime;
         this.seatingPlan = seatingPlan;
+        this.seatsJson = seatsJson;
     }
 
     public Long getId() {
@@ -121,5 +125,13 @@ public class Flight {
 
     public void setSeatingPlan(String seatingPlan) {
         this.seatingPlan = seatingPlan;
+    }
+
+    public String getSeatsJson() {
+        return seatsJson;
+    }
+
+    public void setSeatsJson(String seatsJson) {
+        this.seatsJson = seatsJson;
     }
 }
