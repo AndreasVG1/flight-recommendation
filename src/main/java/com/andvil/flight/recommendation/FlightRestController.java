@@ -9,8 +9,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -28,24 +26,17 @@ public class FlightRestController {
     public ResponseEntity<Page<FlightDTO>> getAllFlights(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "departureTime,asc") String sort) {
+            @RequestParam(defaultValue = "departureTime,asc") String sort,
+            @RequestParam(required = false) String destination,
+            @RequestParam(required = false) Double price,
+            @RequestParam(required = false) Integer duration,
+            @RequestParam(required = false) String departureTime) {
 
-        List<Sort.Order> orders = new ArrayList<>();
-        String[] sortParams = sort.split(",");
+        Pageable pageable = PageRequest.of(page, size, Sort.by(getSortOrder(sort)));
 
-        if (sortParams.length > 0) {
-            String property = sortParams[0].trim();
-            Sort.Direction direction = (sortParams.length > 1 && sortParams[1].trim().equalsIgnoreCase("desc"))
-                    ? Sort.Direction.DESC
-                    : Sort.Direction.ASC;
-
-            orders.add(new Sort.Order(direction, property));
-        }
-
-        Sort sortConfig = Sort.by(orders);
-        Pageable pageable = PageRequest.of(page, size, sortConfig);
-        Page<Flight> flightPage = flightService.getAllFlights(pageable);
-        Page<FlightDTO> flightDTOs = flightPage.map(FlightService::toDTO);
+        Page<FlightDTO> flightDTOs = flightService
+                .getFilteredFlights(destination, price, duration, departureTime, pageable)
+                .map(FlightService::toDTO);
 
         return ResponseEntity.status(HttpStatus.OK).body(flightDTOs);
     }
@@ -55,5 +46,15 @@ public class FlightRestController {
         Flight flight = flightService.getFlight(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Flight with ID " + id + " not found!"));
         return ResponseEntity.status(HttpStatus.OK).body(FlightService.toDTO(flight));
+    }
+
+    private List<Sort.Order> getSortOrder(String sort) {
+        String[] sortParams = sort.split(",");
+        String property = sortParams[0].trim();
+        Sort.Direction direction = (sortParams.length > 1 && sortParams[1].trim().equalsIgnoreCase("desc"))
+                ? Sort.Direction.DESC
+                : Sort.Direction.ASC;
+
+        return List.of(new Sort.Order(direction, property));
     }
 }
