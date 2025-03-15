@@ -43,29 +43,8 @@ public class FlightService {
         return flightRepository.findAll(spec, pageable);
     }
 
-    public Optional<Flight> getFlight(Long id) {
-        return flightRepository.findById(id);
-    }
-
     public Optional<Flight> getFlightByNumber(String flightNumber) {
         return flightRepository.findByFlightNumber(flightNumber);
-    }
-
-    public Flight addFlight(Flight flight) {
-        return flightRepository.save(flight);
-    }
-
-    public void deleteFlight(Long id) {
-        if (flightRepository.existsById(id)) {
-            flightRepository.deleteById(id);
-        } else {
-            throw new RuntimeException("Flight with id " + id + " not found!");
-        }
-    }
-
-    public Flight addFromDTO(FlightDTO dto) {
-        Flight flight = toEntity(dto);
-        return addFlight(flight);
     }
 
     public static FlightDTO toDTO(Flight flight) {
@@ -80,21 +59,6 @@ public class FlightService {
                 flight.getSeatingPlan(),
                 flight.getPrice(),
                 flight.getDuration()
-        );
-    }
-
-    public static Flight toEntity(FlightDTO dto) {
-        return new Flight(
-                dto.airline(),
-                dto.flightNumber(),
-                dto.departure(),
-                dto.destination(),
-                dto.airplane(),
-                dto.duration(),
-                dto.price(),
-                LocalDateTime.parse(dto.departureTime()),
-                LocalDateTime.parse(dto.arrivalTime()),
-                dto.seatingPlan()
         );
     }
 }
