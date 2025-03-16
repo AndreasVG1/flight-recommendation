@@ -7,8 +7,14 @@ A Spring Boot application for selecting flights and recommending seats on the pl
 3. Access the app on `http://localhost:8080`
 
 ## Searching for flights
-Currently, you can search for flights by the following filters:
+Currently, users can search for flights by the following filters:
 1. Departure time
 2. Destination airport
 3. Flight price
 4. Flight duration
+
+## Selecting seats on the plane
+Users can select their seats or have the application recommend them by the following preferences. Currently, only one selection is supported:
+1. Window seat
+2. Near the exit
+3. More leg room
