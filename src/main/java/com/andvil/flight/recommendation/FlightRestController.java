@@ -8,6 +8,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -41,13 +44,24 @@ public class FlightRestController {
     }
 
     @GetMapping("/{flightNumber}")
-    public ResponseEntity<SelectedFlightDTO> getFlightByNumber(@PathVariable String flightNumber) {
+    public ResponseEntity<SelectedFlightDTO> getFlightByNumber(@PathVariable String flightNumber,
+                                                               @RequestParam(required = false) String preference) {
         Flight flight = flightService.getFlightByNumber(flightNumber)
                 .orElseThrow(() -> new ResourceNotFoundException("Flight with number " + flightNumber + " not found!"));
 
-        SelectedFlightDTO selectedFlightDTO = flightService.toSelectedDTO(flight);
+        List<String> availablePreferences = new ArrayList<>(Arrays.asList("window", "near_exit", "legroom"));
 
-        return ResponseEntity.status(HttpStatus.OK).body(selectedFlightDTO);
+        if (preference != null) {
+            SelectedFlightDTO selectedFlightDTO = flightService.toSelectedDTO(flight, preference);
+
+            if (!availablePreferences.contains(preference)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+
+            return ResponseEntity.status(HttpStatus.OK).body(selectedFlightDTO);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(flightService.toSelectedDTO(flight, null));
     }
 
     @PostMapping("/{flightNumber}/select")
@@ -56,7 +70,8 @@ public class FlightRestController {
                 .orElseThrow(() -> new ResourceNotFoundException("Flight not found!"));
 
         String[] selectedSeats = seats.split(",");
-        SelectedFlightDTO flightDTO = flightService.toSelectedDTO(flight);
+
+        SelectedFlightDTO flightDTO = flightService.toSelectedDTO(flight, null);
 
         String[][] seatingPlan = flightDTO.seatingPlan();
 
@@ -81,7 +96,7 @@ public class FlightRestController {
 
         flight.setSeatsJson(flightService.convertSeatsToJson(seatingPlan));
         flightService.save(flight);
-        SelectedFlightDTO selectedFlightDTO = flightService.toSelectedDTO(flight);
+        SelectedFlightDTO selectedFlightDTO = flightService.toSelectedDTO(flight, null);
 
         return ResponseEntity.status(HttpStatus.OK).body(selectedFlightDTO);
     }

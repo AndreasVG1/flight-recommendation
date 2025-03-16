@@ -10,6 +10,7 @@ public record SelectedFlightDTO(
         String arrivalTime,
         Double price,
         Integer duration,
-        String[][] seatingPlan
+        String[][] seatingPlan,
+        String[] recommendedSeats
 ) {
 }
