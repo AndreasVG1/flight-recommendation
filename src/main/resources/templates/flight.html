@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flight</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <h2>Flight Details</h2>
+    <p>Flight Number: [[${flight.flightNumber}]]</p>
+    <p>Departure: [[${flight.departure}]]</p>
+    <p>Destination: [[${flight.destination}]]</p>
+    <p>Departure time: [[${flight.departureTime}]]</p>
+    <p>Arrival time: [[${flight.arrivalTime}]]</p>
+    <p>Seat Preference: [[${preference != null ? preference : 'No preference selected'}]]</p>
+
+    <h2>Select Your Seats</h2>
+
+    <form th:action="@{/flights/confirm-selection}" method="post">
+        <input type="hidden" name="flightNumber" th:value="${flight.flightNumber}" />
+
+        <table class="recommend">
+            <tbody>
+            <tr th:each="row, rowIndex : ${flight.seatingPlan}">
+                <td class="recommendTd" th:each="seat, seatIndex : ${row}">
+                    <label>
+                        <input type="checkbox" name="selectedSeats"
+                               th:value="${seat}"
+                               th:disabled="${seat == 'X'}"
+                               th:classappend="${#lists.contains(flight.recommendedSeats, seat) ? 'recommended' : ''}"
+                               id="seat-${rowIndex}-${seatIndex}" />
+                        <span th:text="${seat}" th:attr="for=${'seat-' + rowIndex + '-' + seatIndex}"></span>
+                    </label>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <button type="submit">Confirm Selection</button>
+    </form>
+</body>
+</html>

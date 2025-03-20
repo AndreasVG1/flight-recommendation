@@ -101,7 +101,7 @@ public class FlightRestController {
         return ResponseEntity.status(HttpStatus.OK).body(selectedFlightDTO);
     }
 
-    private List<Sort.Order> getSortOrder(String sort) {
+    public static List<Sort.Order> getSortOrder(String sort) {
         String[] sortParams = sort.split(",");
         String property = sortParams[0].trim();
         Sort.Direction direction = (sortParams.length > 1 && sortParams[1].trim().equalsIgnoreCase("desc"))

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Flights</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+    <section>
+        <h2>This section has flights</h2>
+    </section>
+
+    <form th:action="@{/flights}" method="get">
+        <input type="text" name="destination" placeholder="Destination" th:value="${param.destination}">
+        <input type="number" name="price" placeholder="Max Price" th:value="${param.price}">
+        <input type="number" name="duration" placeholder="Max Duration (mins)" th:value="${param.duration}">
+        <button type="submit">Search</button>
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th><a th:href="@{/flights(page=1, sort='departure,asc')}">Departing from</a></th>
+                <th><a th:href="@{/flights(page=1, sort='destination,asc')}">Arriving to</a></th>
+                <th><a th:href="@{/flights(page=1, sort='departureTime,asc')}">Departure time</a></th>
+                <th><a th:href="@{/flights(page=1, sort='arrivalTime,asc')}">Arrival time</a></th>
+                <th><a th:href="@{/flights(page=1, sort='airline,asc')}">Airline</a></th>
+                <th><a th:href="@{/flights(page=1, sort='airplane,asc')}">Airplane</a></th>
+                <th><a th:href="@{/flights(page=1, sort='flightNumber,asc')}">Flight number</a></th>
+                <th><a th:href="@{/flights(page=1, sort='duration,asc')}">Duration</a></th>
+                <th><a th:href="@{/flights(page=1, sort='price,asc')}">Price €</a></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="flight : ${flightPage.content}">
+                <td>[[${flight.departure}]]</td>
+                <td>[[${flight.destination}]]</td>
+                <td>[[${flight.departureTime}]]</td>
+                <td>[[${flight.arrivalTime}]]</td>
+                <td>[[${flight.airline}]]</td>
+                <td>[[${flight.airplane}]]</td>
+                <td>[[${flight.flightNumber}]]</td>
+                <td>[[${flight.duration}]]</td>
+                <td>[[${flight.price}]]</td>
+                <td>
+                    <a th:href="@{'/flights/select'(flightNumber=${flight.flightNumber})}"
+                       th:attr="onclick=|event.preventDefault(); selectFlight('${flight.flightNumber}')|">
+                        Select
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div>
+        <label>
+            <input type="radio" name="preference" value="window"> Window seat
+        </label>
+        <label>
+            <input type="radio" name="preference" value="near_exit"> Near exit
+        </label>
+        <label>
+            <input type="radio" name="preference" value="legroom"> More leg room
+        </label>
+    </div>
+
+    <div th:if="${flightPage.totalPages > 1}">
+        <ul>
+            <!-- Previous button -->
+            <li th:if="${flightPage.number > 0}">
+                <a th:href="@{/flights(
+                        page=${flightPage.number},
+                        size=${flightPage.size},
+                        sort=${sort},
+                        destination=${destination},
+                        price=${price},
+                        duration=${duration})}">
+                    Previous
+                </a>
+            </li>
+
+            <!-- Page numbers -->
+            <li th:each="pageNumber : ${pageNumbers}">
+                <a th:href="@{/flights(
+                        page=${pageNumber},
+                        size=${flightPage.size},
+                        sort=${sort},
+                        destination=${destination},
+                        price=${price},
+                        duration=${duration})}"
+                   th:text="${pageNumber}"
+                   th:class="${pageNumber == flightPage.number + 1} ? 'active' : ''">
+                </a>
+            </li>
+
+            <!-- Next button -->
+            <li th:if="${flightPage.number + 1 < flightPage.totalPages}">
+                <a th:href="@{/flights(
+                        page=${flightPage.number + 2},
+                        size=${flightPage.size},
+                        sort=${sort},
+                        destination=${destination},
+                        price=${price},
+                        duration=${duration})}">
+                    Next
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <footer>
+        <p>Andreas Villem</p>
+    </footer>
+</body>
+</html>
+
+<script>
+    function selectFlight(flightNumber) {
+        const selectedPreference = document.querySelector('input[name="preference"]:checked');
+        let url = `/flights/select?flightNumber=${encodeURIComponent(flightNumber)}`;
+
+        if (selectedPreference) {
+            url += `&preference=${encodeURIComponent(selectedPreference.value)}`;
+        }
+
+        window.location.href = url; // Redirect with params
+    }
+</script>

@@ -1,0 +1,65 @@
+table {
+    border: 1px;
+}
+
+ul {
+    list-style: none;
+    display: flex;
+    gap: 5px;
+}
+
+ul li {
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+}
+
+ul li.active {
+    background-color: #4CAF50;
+    color: white;
+    font-weight: bold;
+}
+
+form input {
+    margin-right: 5px;
+}
+
+.recommend {
+    border-collapse: collapse;
+}
+
+.recommendTd {
+    padding: 10px;
+    text-align: center;
+}
+
+input[type="checkbox"] {
+    display: none; /* Hide the checkbox */
+}
+
+input[type="checkbox"] + span {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    background-color: #f8f9fa; /* Default background */
+}
+
+input[type="checkbox"]:checked + span {
+    background-color: #28a745; /* Green for selected */
+    color: white;
+}
+
+.recommended + span {
+    background-color: #f0ad4e; /* Orange for recommended seats */
+    color: orange;
+}
+
+input[type="checkbox"]:disabled + span {
+    background-color: #ccc;
+    color: #777;
+    cursor: not-allowed;
+}

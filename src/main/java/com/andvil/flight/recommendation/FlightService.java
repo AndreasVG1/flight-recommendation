@@ -7,12 +7,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
-import java.sql.SQLOutput;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -81,8 +78,8 @@ public class FlightService {
                 flight.getPrice(),
                 flight.getDuration(),
                 getSeats(flight),
-                recommendSeats(getSeats(flight), userPreferences)
-
+                recommendSeats(getSeats(flight), userPreferences),
+                new String[]{}
         );
     }
 

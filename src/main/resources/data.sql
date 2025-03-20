@@ -2,7 +2,7 @@ INSERT INTO FLIGHT(airline, flight_number, departure, destination, airplane, dur
 VALUES ('United', 'UA 914', 'CDG', 'AUS', 'Boeing 787', 525, 1454, '2025-03-14 11:40', '2025-03-14 15:25', '5-5');
 
 INSERT INTO FLIGHT(airline, flight_number, departure, destination, airplane, duration, price, departure_time, arrival_time, seating_plan)
-VALUES ('Delta', 'UA 2107', 'DFW', 'ADA', 'Boeing 717', 600, 1200, '2025-03-15 10:00', '2025-03-15 16:00', '5-5');
+VALUES ('Delta', 'UA 2108', 'DFW', 'ADA', 'Boeing 717', 600, 1200, '2025-03-15 10:00', '2025-03-15 16:00', '5-5');
 
 INSERT INTO FLIGHT(airline, flight_number, departure, destination, airplane, duration, price, departure_time, arrival_time, seating_plan)
 VALUES ('Delta', 'DL 1023', 'JFK', 'LAX', 'Boeing 737', 360, 450, '2025-03-15 08:00', '2025-03-15 14:00', '6-6');
