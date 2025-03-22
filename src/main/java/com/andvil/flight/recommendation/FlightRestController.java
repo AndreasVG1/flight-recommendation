@@ -24,6 +24,7 @@ public class FlightRestController {
         this.flightService = flightService;
     }
 
+    // Method that returns paged flights based on pagination and sorting options
     @GetMapping
     public ResponseEntity<Page<FlightDTO>> getAllFlights(
             @RequestParam(defaultValue = "0") int page,
@@ -43,6 +44,7 @@ public class FlightRestController {
         return ResponseEntity.status(HttpStatus.OK).body(flightDTOs);
     }
 
+    // Method that returns a data transfer object(DTO) of a flight by the flight number. Optional parameter 'preference', which states the seating preference
     @GetMapping("/{flightNumber}")
     public ResponseEntity<SelectedFlightDTO> getFlightByNumber(@PathVariable String flightNumber,
                                                                @RequestParam(required = false) String preference) {
@@ -64,6 +66,7 @@ public class FlightRestController {
         return ResponseEntity.status(HttpStatus.OK).body(flightService.toSelectedDTO(flight, null));
     }
 
+    // Method for selecting specific seats on a flight
     @PostMapping("/{flightNumber}/select")
     public ResponseEntity<SelectedFlightDTO> reserveSeats(@PathVariable String flightNumber, @RequestParam String seats) {
         Flight flight = flightService.getFlightByNumber(flightNumber)
@@ -75,6 +78,7 @@ public class FlightRestController {
 
         String[][] seatingPlan = flightDTO.seatingPlan();
 
+        // Checks if selected seats are available and marks them with as 'O' in the array.
         for (String selectedSeat : selectedSeats) {
             boolean seatFound = false;
 
@@ -101,6 +105,7 @@ public class FlightRestController {
         return ResponseEntity.status(HttpStatus.OK).body(selectedFlightDTO);
     }
 
+    // Helper method for getting the sorting order
     public static List<Sort.Order> getSortOrder(String sort) {
         String[] sortParams = sort.split(",");
         String property = sortParams[0].trim();

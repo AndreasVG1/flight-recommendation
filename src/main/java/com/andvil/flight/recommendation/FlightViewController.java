@@ -27,11 +27,7 @@ public class FlightViewController {
         this.flightService = flightService;
     }
 
-    @GetMapping("/")
-    public String home() {
-        return "index";
-    }
-
+    // Method that returns all flights on the page based on pagination and sorting options
     @GetMapping("/flights")
     public String flights(
             Model model,
@@ -68,6 +64,7 @@ public class FlightViewController {
         return "flights";
     }
 
+    // Method that  returns the selected flight along with the seating plan
     @GetMapping("/flights/select")
     public String selectFlight(@RequestParam("flightNumber") String flightNumber,
                                @RequestParam (required = false) String preference,
@@ -82,6 +79,7 @@ public class FlightViewController {
         return "flight";
     }
 
+    // Method that confirms the user selection and returns the confirmation page
     @PostMapping("/flights/confirm-selection")
     public String confirmSelection(
             @RequestParam("flightNumber") String flightNumber,
@@ -92,9 +90,9 @@ public class FlightViewController {
                 .orElseThrow(() -> new ResourceNotFoundException("Flight with number " + flightNumber + " not found!"));
 
         SelectedFlightDTO flightDTO = flightService.toSelectedDTO(flight, null);
+        List<String> seats = selectedSeats;
         model.addAttribute("flight", flightDTO);
-
-        //flightService.reserveSeats(flightNumber, selectedSeats);
+        model.addAttribute("seats", seats);
 
         model.addAttribute("message", "Seats reserved successfully!");
         return "confirmation";
