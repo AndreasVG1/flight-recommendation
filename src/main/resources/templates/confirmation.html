@@ -3,11 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Confirmation</title>
+    <link rel="stylesheet" href="/style.css">
 </head>
-<body>
-    <h2>Your seats have been booked!</h2>
-    <h4>Your flight to [[${flight.destination}]] leaves at: [[${flight.departureTime}]]</h4>
-    <h4>Your seats are: [[${seats}]]</h4>
-    <h3>Have a safe trip!</h3>
+<body class="confirmation-page">
+    <section class="confirmation-container">
+        <h2>🎉 Your seats are booked!</h2>
+        <h4>✈️ Flight to <span class="highlight">[[${flight.destination}]]</span></h4>
+        <h4>🕒 Departure Time: <span class="highlight">[[${#temporals.format(flight.departureTime, 'dd MMM, HH:mm')}]]</span></h4>
+        <h4>💺 Seats: <span class="highlight">[[${seats}]]</span></h4>
+        <h3>🌍 Have a safe and wonderful trip!</h3>
+    </section>
 </body>
 </html>

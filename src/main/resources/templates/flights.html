@@ -18,7 +18,7 @@
         <button type="submit">🔍 Search</button>
     </form>
 
-    <table>
+    <table class="flightsList">
         <thead>
             <tr>
                 <th><a th:href="@{/flights(page=1, sort='departure,asc')}">Departing from</a></th>
@@ -36,8 +36,8 @@
             <tr th:each="flight : ${flightPage.content}">
                 <td>[[${flight.departure}]]</td>
                 <td>[[${flight.destination}]]</td>
-                <td>[[${flight.departureTime}]]</td>
-                <td>[[${flight.arrivalTime}]]</td>
+                <td th:text="${#temporals.format(flight.departureTime, 'dd MMM, HH:mm')}"></td>
+                <td th:text="${#temporals.format(flight.arrivalTime, 'dd MMM, HH:mm')}"></td>
                 <td>[[${flight.airline}]]</td>
                 <td>[[${flight.airplane}]]</td>
                 <td>[[${flight.flightNumber}]]</td>

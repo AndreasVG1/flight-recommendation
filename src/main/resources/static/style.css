@@ -1,4 +1,12 @@
-table {
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+}
+
+.flightsList {
     width: 100%;
     border-collapse: collapse;
     font-family: 'Arial', sans-serif;
@@ -150,42 +158,148 @@ td:last-child {
     pointer-events: none;
 }
 
-.recommend {
+/* Specific styling for the seating plan */
+.seating-plan {
     border-collapse: collapse;
-}
-
-.recommendTd {
+    margin: 20px auto;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
     padding: 10px;
-    text-align: center;
 }
 
-input[type="checkbox"] {
-    display: none; /* Hide the checkbox */
-}
-
-input[type="checkbox"] + span {
-    display: inline-block;
-    width: 30px;
-    height: 30px;
+/* Each seat cell */
+.seating-plan td {
+    padding: 5px;
+    border: 1px solid #ddd;
+    width: 40px;
+    height: 40px;
     text-align: center;
-    line-height: 30px;
-    border: 1px solid #ccc;
+    vertical-align: middle;
+    background: #e0e0e0;
+    font-weight: bold;
     cursor: pointer;
-    background-color: #f8f9fa; /* Default background */
 }
 
-input[type="checkbox"]:checked + span {
-    background-color: #28a745; /* Green for selected */
-    color: white;
+/* Aisle separator styling */
+.seating-plan td.aisle {
+    background: transparent;
+    width: 10px;
 }
 
-.recommended + span {
-    background-color: #f0ad4e; /* Orange for recommended seats */
-    color: orange;
+/* Recommended seats styling */
+.seating-plan input.recommended + span {
+    background: #ffdd57;
+    color: #333;
 }
 
-input[type="checkbox"]:disabled + span {
-    background-color: #ccc;
-    color: #777;
+/* Taken (disabled) seats styling */
+.seating-plan input:disabled + span {
+    background: #888;
+    color: #ddd;
     cursor: not-allowed;
+}
+
+/* Checked seat styling */
+.seating-plan input:checked + span {
+    background: #0077cc;
+    color: #fff;
+    border-radius: 4px;
+}
+
+/* Checkbox hidden but clickable via label */
+.seating-plan input {
+    display: none;
+}
+
+/* Seat label styling */
+.seating-plan span {
+    display: block;
+    text-align: center;
+    line-height: 40px;
+}
+
+/* Aisle separator styling */
+.seating-plan td.aisle {
+    background: transparent;
+    color: #888;
+    font-weight: bold;
+    pointer-events: none; /* Ensure it's non-clickable */
+    width: 10px;
+}
+
+.flight-details {
+    background: #fff;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    color: #0077cc;
+}
+
+/* Button Styling */
+button {
+    background-color: #0077cc;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+button:hover {
+    background: #005fa3;
+}
+
+/* Confirmation page styling */
+.confirmation-page {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(to bottom right, #f0f0f0, #d0e0f0);
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+}
+
+.confirmation-container {
+    background: #ffffff;
+    padding: 30px 40px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+h2 {
+    color: #2e86de;
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+h3 {
+    color: #27ae60;
+    margin-top: 20px;
+    font-size: 1.5rem;
+}
+
+h4 {
+    color: #444;
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+}
+
+.highlight {
+    color: #e67e22;
+    font-weight: bold;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
 }

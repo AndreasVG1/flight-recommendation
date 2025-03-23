@@ -6,27 +6,29 @@
     <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-    <h2>Flight Details</h2>
-    <p>Flight Number: [[${flight.flightNumber}]]</p>
-    <p>Departure: [[${flight.departure}]]</p>
-    <p>Destination: [[${flight.destination}]]</p>
-    <p>Departure time: [[${flight.departureTime}]]</p>
-    <p>Arrival time: [[${flight.arrivalTime}]]</p>
-    <p>Seat Preference: [[${preference != null ? preference : 'No preference selected'}]]</p>
+    <section class="flight-details">
+        <h2>Your Flight Details</h2>
+        <p><strong>Flight Number:</strong> [[${flight.flightNumber}]]</p>
+        <p><strong>From:</strong> [[${flight.departure}]]</p>
+        <p><strong>To:</strong> [[${flight.destination}]]</p>
+        <p><strong>Departure Time:</strong> [[${#temporals.format(flight.departureTime, 'dd MMM, HH:mm')}]]</p>
+        <p><strong>Arrival Time:</strong> [[${#temporals.format(flight.arrivalTime, 'dd MMM, HH:mm')}]]</p>
+        <p><strong>Seat Preference:</strong> [[${preference != null ? preference : 'No preference selected'}]]</p>
+    </section>
 
     <h2>Select Your Seats</h2>
 
     <form th:action="@{/flights/confirm-selection}" method="post">
         <input type="hidden" name="flightNumber" th:value="${flight.flightNumber}" />
 
-        <table class="recommend">
+        <table class="recommend seating-plan">
             <tbody>
             <tr th:each="row, rowIndex : ${flight.seatingPlan}">
                 <td class="recommendTd" th:each="seat, seatIndex : ${row}">
                     <label>
                         <input type="checkbox" name="selectedSeats"
                                th:value="${seat}"
-                               th:disabled="${seat == 'X'}"
+                               th:disabled="${seat == 'X' or seat == '|'}"
                                th:classappend="${#lists.contains(flight.recommendedSeats, seat) ? 'recommended' : ''}"
                                id="seat-${rowIndex}-${seatIndex}" />
                         <span th:text="${seat}" th:attr="for=${'seat-' + rowIndex + '-' + seatIndex}"></span>
