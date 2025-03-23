@@ -10,15 +10,33 @@ Otsisin alguses internetist avalikku API-t, mida kasutada, kuid ainus võimalus,
 - Projekti tööriistaks otsustain kasutada Mavenit, sest sellega on mul varem kogemust ja paistab pealtnäha lihtsam, kui Gradle.
 - Andmebaasi lahenduseks valisin H2 Database, sest see on kõige lihtsam antud rakenduse jaoks ja ei nõua välist andmebaasi ühendust.
 - Front-end jaoks kasutasin Thymeleaf, sest see sobib hästi Java Spring projektideks ning on lihtne kasutada.
+- Kasutasin ChatGPT üksikute meetodite või algoritmide genereerimiseks ning front-end kujunduse genereerimiseks.
 
-## Katsumused ja probleemid
+## Kuidas tegin
+1. Lõin andmebaasi olemi Flight. Ning andmebaasiga suhtlemiseks repositoorium FlightRepository.
+2. Kirjutasin klassi FlightService selleks, et klientrakendus ei suhtleks otse andmebaasiga, vaid oleks üks kiht vahel, mis väljastab andmeid.
+3. Lisasin Record tüüpi klassid FlightDTO ja SelectedFlightDTO. Need on andmeedastus objektid (Data transfer object). Need on vajalikud selleks, et klientrakendus ei tegeleks otseselt andmebaasi olemitega.
+   - FlightDTO on kõikide lendude väljastamiseks. Selles ei kuvata istekohti.
+   - SelectedFlightDTO on kindla lennu väljastamiseks. Selles kuvatakse istekohtade plaan.
+4. Kirjutasin API jaoks FlightRestController, mis väljastab andmeid JSON formaadis. Plaanisin algselt kasutada enda kirjutatud API-t ka klientrakenduses, kuid hiljem selgus, et Thymeleaf ei suhtle API-ga, vaid selle jaoks on eraldi ModelViewController.
+5. Kirjutasin klientrakenduse FlightViewController, mis kasutab Thymeleaf mallimootorit, et kuvada andmeid HTML failides. Meetodid on väga sarnased FlightRestController meetoditele, kuid JSON asemel kuvatakse HTML fail.
+6. Kasutasin ChatGPT, et genereerida lehekülje kujundus style.css failis.
+
+## Katsumused ja puudujäägid
 - Kõige keerulisem minu jaoks oli front-end poole kirjutamine, sest mul puudub varasem kogemus Thymeleaf-iga ja teiste raamistikega. Sel põhjusel on ka rakenduse visuaalne pool väga algeline ning vajas väga palju ChatGPT abi.
 - Keeruliseks osutus ka istmete valimine ja soovitamine. Otsustasin standardiseerida istmekonfiguratsiooni järgmiselt:
-1. Lennukites on üks vahekäik ja sellest mõlemale poole jääb kindel arv istmeid, mida saab vabalt valida (formaadis 5-5, 6-6, jne)
-2. Igas istmeplaanis on kindel arv ridu. (klassi FlightService meetodis generateSeating() saab muuta ridade arvu, vaikimisi 20 rida)
-3. Istmeplaani hoitakse String[ridade arv][istmete arv reas] andmestruktuuris, kus igal istmel on vastav kood. Iga rida eristab täht ning tähele järgneb istme number reas, näiteks esimese rea esimene iste on A1, teise rea kolmas iste B3, jne.
+  1. Lennukites on üks vahekäik ja sellest mõlemale poole jääb kindel arv istmeid, mida saab vabalt valida (formaadis 5-5, 6-6, jne)
+  2. Igas istmeplaanis on kindel arv ridu. (klassi FlightService meetodis generateSeating() saab muuta ridade arvu, vaikimisi 20 rida)
+  3. Istmeplaani hoitakse String[ridade arv][istmete arv reas] andmestruktuuris, kus igal istmel on vastav kood. Iga rida eristab täht ning tähele järgneb istme number reas, näiteks esimese rea esimene iste on A1, teise rea kolmas iste B3, jne.
 - Ideaalis oleksin soovinud kasutada välist API-t andmete kogumiseks, mis oleks lubanud mul keskenduda täielikult rakenduse funktsionaalsusele ja visuaalsele poolele. 100 päringust oleks kahjuks väheks jäänud.
 - Pärast API kirjutamist avastasin, et Thymeleaf jaoks ei olnud tarvis kirjutada REST API-t, aga sellegipoolest oli palju abi FlightService klassist, mida mõlemad (FlightRestController ja FlightViewController) kasutasid.
 - Minu lahenduse juures oleks olnud keeruline lisada istekohtadele erinevaid klasse. Arvan, et selle jaoks oleks olnud mõistlik luua eraldi andmebaasi olem SEATING_PLAN ja ühendada see olemiga FLIGHT.
 - Ümberistumise toetamist oleksin saanud lisada, kui kasutada reaalseid andmeid välise API kaudu. Enda lahenduse juures ilmselt oleksin pidanud lähteandmetesse (data.sql) lisama ise selliseid lende, mida oleks saanud ühendada ümberistumistega. Sellisel juhul oleks olnud võimalik lisada otsingufunktsioon, kus kasutaja saab otsida lende ühest lennujaamast teise.
 - Konteinerisatsiooni kogemus mul hetkel kahjuks puudus, mistõttu ei osanud ma ka rakendust Dockeri konteinerisse paigutada.
+
+
+## Mida õppisin
+- Kõige rohkem õppisin Thymeleaf mallimootori kohta, sest sellega varasemalt kokkupuude puudus.
+- Arendasin oma teadmisi API-de kirjutamises. Lõin API, mis oli natukene enamat, kui lihtsalt CRUD.
+- Oleksin soovinud lisada oma oskustepagasisse teadmisi avaliku API kasutamisest ja rakenduse Dockeri konteinerisse paigutamisest, kuid kahjuks jäi aega väheks.
+- Alguses tundus rakendus ulmeliselt keeruline, kuid ülesande enda jaoks hoomatavateks tükkideks jagamine aitas lahenduseni jõuda.
