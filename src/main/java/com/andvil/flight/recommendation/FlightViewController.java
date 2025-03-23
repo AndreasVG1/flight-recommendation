@@ -32,7 +32,7 @@ public class FlightViewController {
     public String flights(
             Model model,
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "5") int size,
             @RequestParam(defaultValue = "departureTime,asc") String sort,
             @RequestParam(required = false) String destination,
             @RequestParam(required = false) Double price,
